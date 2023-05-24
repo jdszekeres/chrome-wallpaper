@@ -1,40 +1,6 @@
-const WEIRD_HOLIDAYS_URL = "https://raw.githubusercontent.com/Ttesori/api-todaysholiday/main/_assets/holidays.csv"
+const WEIRD_HOLIDAYS_URL = "https://www.checkiday.com/api/3/?d="
 
-function parseCSV(str) {
-    const arr = [];
-    let quote = false;  // 'true' means we're inside a quoted field
 
-    // Iterate over each character, keep track of current row and column (of the returned array)
-    for (let row = 0, col = 0, c = 0; c < str.length; c++) {
-        let cc = str[c], nc = str[c+1];        // Current character, next character
-        arr[row] = arr[row] || [];             // Create a new row if necessary
-        arr[row][col] = arr[row][col] || '';   // Create a new column (start with empty string) if necessary
-
-        // If the current character is a quotation mark, and we're inside a
-        // quoted field, and the next character is also a quotation mark,
-        // add a quotation mark to the current column and skip the next character
-        if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }
-
-        // If it's just one quotation mark, begin/end quoted field
-        if (cc == '"') { quote = !quote; continue; }
-
-        // If it's a comma and we're not in a quoted field, move on to the next column
-        if (cc == ',' && !quote) { ++col; continue; }
-
-        // If it's a newline (CRLF) and we're not in a quoted field, skip the next character
-        // and move on to the next row and move to column 0 of that new row
-        if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; continue; }
-
-        // If it's a newline (LF or CR) and we're not in a quoted field,
-        // move on to the next row and move to column 0 of that new row
-        if (cc == '\n' && !quote) { ++row; col = 0; continue; }
-        if (cc == '\r' && !quote) { ++row; col = 0; continue; }
-
-        // Otherwise, append the current character to the current column
-        arr[row][col] += cc;
-    }
-    return arr;
-}
 function get_os() {
     os = navigator.userAgentData.platform.toLowerCase()
     if (os.includes("win")) {return "https://simpleicons.org/icons/windows.svg"}
@@ -48,13 +14,10 @@ function get_os() {
     date = new Date()
     document.getElementById("date").innerHTML =   `${date.getMonth()}/${date.getDay()}/${date.getYear()}`
     weird_resp = await fetch(WEIRD_HOLIDAYS_URL)
-    csv = await weird_resp.text()
-    csvAsArray = parseCSV(csv)
-    currentDate = new Date();
-    formattedDate = `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')}/21`.replace("0","");
-    holidays = csvAsArray.filter(holiday => holiday[0] === formattedDate)
+    json = await weird_resp.json()
+    holidays = json.holidays
     final_string = ""
-    holidays.forEach((x)=>{final_string+=`Happy ${x[1]}<br>`})
+    holidays.forEach((x)=>{final_string+=`Happy ${x.name}<br>`})
     document.getElementById("holidays").innerHTML = final_string
     cpu_count = navigator.hardwareConcurrency
     document.getElementById("cpus").innerHTML = `<i class="fa fa-microchip"></i>`.repeat(cpu_count)
