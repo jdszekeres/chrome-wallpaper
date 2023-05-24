@@ -1,0 +1,32 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-size: cover;
+}
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: calc(32px + 5em);            
+  }
+#date {
+    font-size: 20px;
+    padding: 0px;
+    margin: 0px;
+}
+#clock {
+    padding-top: 0px;
+    margin-top: 0px;
+    font-size: 5em;
+    font-family: 'Inter', sans-serif;
+
+}
+
+#holidays {
+    color: gray;
+    font-size: 1.5em;
+}
+
+#attrib {
+    font-size: 8px;
+}
+
